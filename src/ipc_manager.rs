@@ -3,10 +3,16 @@ use crossbeam_channel::{unbounded, Receiver, Sender};
 use crate::product::Product;
 use std::sync::{Arc, Mutex};
 
+// TODO: (Verificar completado)
+// ✓ Canales configurados entre estaciones
+// ✓ Funciones send/recv con manejo de errores
+// [ ] Opcional: Añadir métricas de rendimiento IPC
+
 /// Configura todos los canales IPC necesarios para la línea de ensamblaje.
 /// Retorna una tupla con:
 /// - Cola inicial de entrada (para productos nuevos)
 /// - Canales entre estaciones (Corte → Ensamblaje → Empaque)
+/// unbounded(): Creates a channel of unbounded capacity.
 pub fn setup_ipc() -> (
     Arc<Mutex<Sender<Product>>>,          // Cola global de entrada
     (Receiver<Product>, Sender<Product>), // Canal Corte → Ensamblaje

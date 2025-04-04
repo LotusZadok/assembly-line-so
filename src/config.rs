@@ -1,6 +1,6 @@
 // src/config.rs
 
-//podemos cambiar el tamaño a 32-bits, dependiendo de como vaya la vara
+// Podemos cambiar el tamaño a 32-bits, dependiendo de como vaya la vara
 
 // -- Parámetros principales --
 pub const PRODUCTS_PER_BATCH: usize = 10;  // Mínimo 10 productos 

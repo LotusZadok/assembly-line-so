@@ -5,6 +5,11 @@ use crate::config::{CUTTING_TIME, ASSEMBLY_TIME, PACKAGING_TIME, SIMULATION_SPEE
 use std::thread;
 use std::time::{Duration, SystemTime};
 
+// TODO: (Verificar completado)
+// ✓ Lógica de procesamiento con sleep implementada
+// ✓ Manejo de logs de entrada/salida
+// [ ] Opcional: Añadir timeout para operaciones bloqueantes
+
 pub fn start_station(
     name: String,
     input_rx: Receiver<Product>,

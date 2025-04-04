@@ -5,6 +5,11 @@ use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Arc;
 use std::time::{SystemTime, UNIX_EPOCH};
 
+// TODO: (Verificar completado)
+// ✓ Struct Product con métricas implementado
+// ✓ Sistema de estados atómicos funcionando
+// [ ] Opcional: Añadir validación de tiempos no negativos
+
 // Status del producto (Enum para máquina de estados)
 #[derive(Debug, Clone, Serialize)]
 pub enum ProductStatus {
