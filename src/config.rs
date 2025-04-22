@@ -19,3 +19,6 @@ pub const MAX_ARRIVAL_TIME: u64 = 5;  // Tiempo máximo entre llegadas (segundos
 pub const SIMULATION_SPEED_MULTIPLIER: f64 = 1.0; // Escala el tiempo de ejecución (1.0 = real)
 pub const ENABLE_VERBOSE_LOGGING: bool = true;    // Habilita logging detallado
 pub const RANDOM_SEED: Option<u64> = Some(42);    // Seed para generación aleatoria (None = aleatorio) usar none para produccion, some para debugging
+
+/// Orden estricto de las estaciones para métricas y reportes
+pub const STATION_ORDER: [&str; 3] = ["Corte", "Ensamblaje", "Empaque"];

@@ -33,9 +33,9 @@ pub struct Product {
 
 // Métricas internas
 #[derive(Debug, Serialize)]
-struct Metrics {
-    total_wait_time: u64,
-    turnaround_time: Option<u64>,
+pub struct Metrics {
+    pub total_wait_time: u64,
+    pub turnaround_time: Option<u64>,
 }
 
 // Wrapper atómico para el estado
@@ -78,7 +78,7 @@ impl Product {
             entry.1 = now;
         }
         
-        self.calculate_wait_time();
+        self.finalize_metrics();
     }
 
     /// Mata/finaliza el producto
@@ -88,22 +88,24 @@ impl Product {
     }
 
     /// Calcula tiempo total de espera
-    fn calculate_wait_time(&mut self) {
-        let mut last_exit = self.arrival_time;
-        self.metrics.total_wait_time = self.station_logs.values()
-            .filter(|&&(entry, _)| entry > 0)
-            .fold(0, |acc, &(entry, exit)| {
-                let wait = entry - last_exit;
-                last_exit = exit;
-                acc + wait
-            });
-    }
-
-    /// Finaliza métricas al terminar procesamiento
     fn finalize_metrics(&mut self) {
-        if let Some((_, last_exit)) = self.station_logs.values().last() {
-            self.metrics.turnaround_time = Some(last_exit - self.arrival_time);
+        use crate::config::STATION_ORDER;
+        let mut last_time = self.arrival_time;
+        let mut wait = 0;
+   
+        // Recorre siempre en el orden configurado
+        for &station in STATION_ORDER.iter() {
+            if let Some(&(entry, exit)) = self.station_logs.get(station) {
+                // espera = entry - last_time, si entry ≥ last_time
+                if entry >= last_time {
+                    wait += entry - last_time;
+                }
+                last_time = exit;
+            }
         }
+   
+        self.metrics.total_wait_time = wait;
+        self.metrics.turnaround_time = Some(last_time - self.arrival_time);
     }
 
     pub fn set_status(&self, status: ProductStatus) {

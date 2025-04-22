@@ -49,8 +49,14 @@ pub fn start_station(
                     // Manejar siguiente paso
                     if is_final_station {
                         product.kill();
+                        // ¡Muy importante! enviarlo para que lo recoja el módulo de métricas
+                        output_tx
+                            .send(product)
+                            .expect("Error enviando producto finalizado a métricas");
                     } else {
-                        output_tx.send(product).unwrap();
+                        output_tx
+                            .send(product)
+                            .expect("Error enviando producto a la siguiente estación");
                     }
                 },
                 Err(_) => break, // Canal cerrado
