@@ -5,9 +5,9 @@
 // [ ] Serializar resultados a JSON (serde_json)
 // [ ] Mostrar tiempos por estación individual
 
-use crossbeam_channel::Receiver;
-use crate::product::Product;
 use crate::config::STATION_ORDER;
+use crate::product::Product;
+use crossbeam_channel::Receiver;
 use std::thread;
 
 /// Inicia un recolector de métricas que lee productos terminados.
@@ -49,7 +49,10 @@ pub fn start_metrics_collector(
         println!("\nID   Espera(s)   Turnaround(s)");
         for p in &results {
             let turnaround = p.metrics.turnaround_time.unwrap_or_default();
-            println!("{:<4} {:<11} {}", p.id, p.metrics.total_wait_time, turnaround);
+            println!(
+                "{:<4} {:<11} {}",
+                p.id, p.metrics.total_wait_time, turnaround
+            );
         }
 
         // Tiempos por estación

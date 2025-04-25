@@ -7,10 +7,10 @@
 // [ ] Integración con canales IPC (usar ipc_manager helpers)
 // [ ] Garantizar sincronización entre estaciones
 
-use crossbeam_channel::{Receiver, Sender, TryRecvError};
+use crate::config::DEFAULT_QUANTUM;
 use crate::product::Product;
 use crate::station;
-use crate::config::DEFAULT_QUANTUM;
+use crossbeam_channel::{Receiver, Sender, TryRecvError};
 use std::{
     collections::VecDeque,
     thread,
@@ -76,7 +76,6 @@ pub fn start_rr_station(
                         output_tx
                             .send(product)
                             .expect("Falló envío de producto finalizado a métricas");
-
                     } else {
                         output_tx.send(product).expect("Falló envío RR → next");
                     }
@@ -100,9 +99,9 @@ pub fn start_rr_station(
 /// Utilitario para sacar el tiempo de configuración de cada estación
 fn get_station_time(name: &str) -> u64 {
     match name {
-        "Corte"       => crate::config::CUTTING_TIME,
-        "Ensamblaje"  => crate::config::ASSEMBLY_TIME,
-        "Empaque"     => crate::config::PACKAGING_TIME,
+        "Corte" => crate::config::CUTTING_TIME,
+        "Ensamblaje" => crate::config::ASSEMBLY_TIME,
+        "Empaque" => crate::config::PACKAGING_TIME,
         _ => panic!("Estación desconocida en scheduler: {}", name),
     }
 }

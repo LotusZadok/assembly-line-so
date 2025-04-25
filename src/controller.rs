@@ -4,17 +4,20 @@
 // [ ] Coordinar inicio/detención de la simulación
 // [ ] Recibir métricas de las estaciones
 
+use crossbeam_channel::Sender;
+use rand::rngs::StdRng;
+use rand::{Rng, SeedableRng};
 use std::{
     sync::{Arc, Mutex},
     thread,
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
-use rand::{Rng, SeedableRng};
-use rand::rngs::StdRng;
-use crossbeam_channel::Sender;
 
 use crate::{
-    config::{PRODUCTS_PER_BATCH, MIN_ARRIVAL_TIME, MAX_ARRIVAL_TIME, SIMULATION_SPEED_MULTIPLIER, RANDOM_SEED},
+    config::{
+        MAX_ARRIVAL_TIME, MIN_ARRIVAL_TIME, PRODUCTS_PER_BATCH, RANDOM_SEED,
+        SIMULATION_SPEED_MULTIPLIER,
+    },
     ipc_manager::send_product,
     product::Product,
 };

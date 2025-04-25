@@ -1,8 +1,8 @@
 // src/product.rs
 use serde::Serialize;
 use std::collections::HashMap;
-use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Arc;
+use std::sync::atomic::{AtomicU64, Ordering};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 // TODO: (Verificar completado)
@@ -26,7 +26,7 @@ pub struct Product {
     pub id: u64,
     pub arrival_time: u64,
     pub station_logs: HashMap<String, (u64, u64)>,
-    #[serde(skip_serializing)] 
+    #[serde(skip_serializing)]
     pub status: Arc<AtomicStatus>,
     pub metrics: Metrics,
 }
@@ -46,7 +46,7 @@ impl Product {
     /// Crea un nuevo producto con ID único
     pub fn new(id: u64, arrival_time: u64) -> Self {
         static COUNTER: AtomicU64 = AtomicU64::new(0);
-        
+
         Self {
             id,
             arrival_time,
@@ -62,12 +62,13 @@ impl Product {
     /// Registra entrada a una estación
     pub fn log_entry(&mut self, station: &str) {
         let now = current_timestamp();
-        self.station_logs.entry(station.to_string())
+        self.station_logs
+            .entry(station.to_string())
             .and_modify(|e| e.0 = now)
             .or_insert((now, 0));
-            
+
         self.set_status(ProductStatus::InProgress {
-            station: station.to_string()
+            station: station.to_string(),
         });
     }
 
@@ -77,7 +78,7 @@ impl Product {
         if let Some(entry) = self.station_logs.get_mut(station) {
             entry.1 = now;
         }
-        
+
         self.finalize_metrics();
     }
 
@@ -92,7 +93,7 @@ impl Product {
         use crate::config::STATION_ORDER;
         let mut last_time = self.arrival_time;
         let mut wait = 0;
-   
+
         // Recorre siempre en el orden configurado
         for &station in STATION_ORDER.iter() {
             if let Some(&(entry, exit)) = self.station_logs.get(station) {
@@ -103,7 +104,7 @@ impl Product {
                 last_time = exit;
             }
         }
-   
+
         self.metrics.total_wait_time = wait;
         self.metrics.turnaround_time = Some(last_time - self.arrival_time);
     }
@@ -124,7 +125,7 @@ impl AtomicStatus {
     }
 
     fn store(&self, status: ProductStatus) {
-        self.0.store(status.to_u64(), Ordering::SeqCst); 
+        self.0.store(status.to_u64(), Ordering::SeqCst);
     }
 
     fn load(&self) -> ProductStatus {
@@ -150,7 +151,6 @@ impl ProductStatus {
             ProductStatus::Completed => 3,
             ProductStatus::Dead => 4,
         }
-
     }
 
     fn from_u64(value: u64) -> Self {
@@ -168,7 +168,6 @@ impl ProductStatus {
             _ => panic!("Unvalid value for ProductStatus"),
         }
     }
-
 }
 
 // Tests unitarios (le pedí a deepseek que me los hiciera pero no entiendo muy bien cómo va la vara)
@@ -179,13 +178,13 @@ mod tests {
     #[test]
     fn test_product_lifecycle() {
         let mut p = Product::new(1, 1000);
-        
+
         p.log_entry("Cutting");
         assert!(matches!(p.get_status(), ProductStatus::InProgress { .. }));
-        
+
         p.log_exit("Cutting");
         assert!(p.metrics.total_wait_time > 0);
-        
+
         p.kill();
         assert!(matches!(p.get_status(), ProductStatus::Dead));
         assert!(p.metrics.turnaround_time.is_some());

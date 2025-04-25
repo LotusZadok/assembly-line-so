@@ -1,6 +1,6 @@
 // src/ipc_manager.rs
-use crossbeam_channel::{unbounded, Receiver, Sender};
 use crate::product::Product;
+use crossbeam_channel::{Receiver, Sender, unbounded};
 use std::sync::{Arc, Mutex};
 
 // TODO: (Verificar completado)
@@ -17,21 +17,21 @@ pub fn setup_ipc() -> (
     Arc<Mutex<Sender<Product>>>,          // Cola global de entrada
     (Receiver<Product>, Sender<Product>), // Canal Corte → Ensamblaje
     (Receiver<Product>, Sender<Product>), // Canal Ensamblaje → Empaque
-    (Receiver<Product>, Sender<Product>) 
+    (Receiver<Product>, Sender<Product>),
 ) {
     // Cola compartida para productos no procesados (protegida con Mutex)
     let (global_tx, global_rx) = unbounded();
     let shared_global_tx = Arc::new(Mutex::new(global_tx));
 
     // Canales entre estaciones
-    let (cut_tx, assembly_rx) = unbounded();  // Corte → Ensamblaje
+    let (cut_tx, assembly_rx) = unbounded(); // Corte → Ensamblaje
     let (assembly_tx, pack_rx) = unbounded(); // Ensamblaje → Empaque
 
     (
         shared_global_tx,
         (global_rx, cut_tx),
         (assembly_rx, assembly_tx),
-        (pack_rx, unbounded().0) // Última estación no envía a nadie
+        (pack_rx, unbounded().0), // Última estación no envía a nadie
     )
 }
 
