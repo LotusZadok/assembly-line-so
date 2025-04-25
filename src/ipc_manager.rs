@@ -41,8 +41,7 @@ pub fn send_product(tx: &Sender<Product>, product: Product) -> Result<(), &'stat
         .map_err(|_| "Error sending product through the channel")
 }
 
-/// Recibe un producto de un canal con timeout
-pub fn recv_product(rx: &Receiver<Product>) -> Result<Product, &'static str> {
+/*pub fn recv_product(rx: &Receiver<Product>) -> Result<Product, &'static str> {
     rx.recv()
         .map_err(|_| "Error receiving product from the channel")
-}
+}*/

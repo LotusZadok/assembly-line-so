@@ -45,7 +45,7 @@ struct AtomicStatus(AtomicU64);
 impl Product {
     /// Crea un nuevo producto con ID único
     pub fn new(id: u64, arrival_time: u64) -> Self {
-        static COUNTER: AtomicU64 = AtomicU64::new(0);
+        //static COUNTER: AtomicU64 = AtomicU64::new(0);
 
         Self {
             id,
@@ -113,9 +113,9 @@ impl Product {
         self.status.store(status);
     }
 
-    pub fn get_status(&self) -> ProductStatus {
+    /*pub fn get_status(&self) -> ProductStatus {
         self.status.load()
-    }
+    }*/
 }
 
 // Implementación atómica para el estado
@@ -128,9 +128,9 @@ impl AtomicStatus {
         self.0.store(status.to_u64(), Ordering::SeqCst);
     }
 
-    fn load(&self) -> ProductStatus {
+    /*fn load(&self) -> ProductStatus {
         ProductStatus::from_u64(self.0.load(Ordering::SeqCst))
-    }
+    }*/
 }
 // Obtiene timestamp actual en segundos
 fn current_timestamp() -> u64 {
@@ -153,7 +153,7 @@ impl ProductStatus {
         }
     }
 
-    fn from_u64(value: u64) -> Self {
+    /*fn from_u64(value: u64) -> Self {
         match value {
             0 => ProductStatus::Waiting,
             1 => ProductStatus::InProgress {
@@ -167,7 +167,7 @@ impl ProductStatus {
             4 => ProductStatus::Dead,
             _ => panic!("Unvalid value for ProductStatus"),
         }
-    }
+    }*/
 }
 
 // Tests unitarios (le pedí a deepseek que me los hiciera pero no entiendo muy bien cómo va la vara)
